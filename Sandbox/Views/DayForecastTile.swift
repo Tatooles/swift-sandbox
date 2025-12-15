@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DayForecastTile: View {
     let weather: WeatherData
+    var isSelected: Bool = false
     
     var iconName: String {
         weather.isRainy ? "cloud.rain.fill" : "sun.max.fill"
@@ -75,13 +76,14 @@ struct DayForecastTile: View {
         .padding(.horizontal, 10)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemBackground))
+                .fill(isSelected ? Color.blue.opacity(0.1) : Color(.systemBackground))
                 .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                .stroke(isSelected ? Color.blue : Color.gray.opacity(0.2), lineWidth: isSelected ? 2 : 1)
         )
+        .animation(.easeInOut(duration: 0.2), value: isSelected)
     }
 }
 

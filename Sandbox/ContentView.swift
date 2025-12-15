@@ -9,9 +9,14 @@ import SwiftUI
 
 struct ContentView: View {
     let weatherData = generateDummyWeatherData()
+    @State private var selectedWeather: WeatherData?
     
     var todayWeather: WeatherData {
         weatherData.first!
+    }
+    
+    var displayedWeather: WeatherData {
+        selectedWeather ?? todayWeather
     }
     
     var body: some View {
@@ -27,7 +32,10 @@ struct ContentView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
                             ForEach(weatherData) { day in
-                                DayForecastTile(weather: day)
+                                DayForecastTile(weather: day, isSelected: displayedWeather.id == day.id)
+                                    .onTapGesture {
+                                        selectedWeather = day
+                                    }
                             }
                         }
                         .padding(.horizontal)
@@ -37,9 +45,9 @@ struct ContentView: View {
                 .frame(height: geometry.size.height / 3)
                 .background(Color(.systemGroupedBackground))
                 
-                // Bottom 2/3: Today's Detailed View
+                // Bottom 2/3: Selected Day's Detailed View
                 ScrollView {
-                    TodayDetailView(weather: todayWeather)
+                    DetailView(weather: displayedWeather)
                         .padding()
                 }
                 .frame(height: geometry.size.height * 2 / 3)

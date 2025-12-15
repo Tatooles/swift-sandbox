@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TodayDetailView: View {
+struct DetailView: View {
     let weather: WeatherData
     
     var iconName: String {
@@ -23,10 +23,10 @@ struct TodayDetailView: View {
             // Header
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Today")
+                    Text(weather.dayOfWeek)
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                    Text("\(weather.dayOfWeek), \(weather.formattedDate)")
+                    Text(weather.formattedDate)
                         .font(.title3)
                         .foregroundStyle(.secondary)
                 }
@@ -168,5 +168,5 @@ struct SunTimeCard: View {
 }
 
 #Preview {
-    TodayDetailView(weather: generateDummyWeatherData().first!)
+    DetailView(weather: generateDummyWeatherData().first!)
 }
