@@ -8,52 +8,44 @@
 import SwiftUI
 
 struct ContentView: View {
+    let weatherData = generateDummyWeatherData()
+    
+    var todayWeather: WeatherData {
+        weatherData.first!
+    }
+    
     var body: some View {
-        Text("Dec 10 - Dec 17")
-        ScrollView([.horizontal]) {
-            HStack {
-                DayForecast(day: "Mon", isRainy: false, high: 70, low: 50)
-                DayForecast(day: "Tue", isRainy: true, high: 60, low: 40)
-                DayForecast(day: "Wed", isRainy: false, high: 68, low: 49)
-                DayForecast(day: "Thu", isRainy: false, high: 68, low: 49)
-                DayForecast(day: "Fri", isRainy: false, high: 68, low: 49)
-                DayForecast(day: "Sat", isRainy: false, high: 68, low: 49)
-                DayForecast(day: "Sun", isRainy: false, high: 68, low: 49)
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                // Top 1/3: Horizontal Scroll View with Day Tiles
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("10-Day Forecast")
+                        .font(.headline)
+                        .padding(.horizontal)
+                        .padding(.top, 8)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(weatherData) { day in
+                                DayForecastTile(weather: day)
+                            }
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom, 8)
+                    }
+                }
+                .frame(height: geometry.size.height / 3)
+                .background(Color(.systemGroupedBackground))
+                
+                // Bottom 2/3: Today's Detailed View
+                ScrollView {
+                    TodayDetailView(weather: todayWeather)
+                        .padding()
+                }
+                .frame(height: geometry.size.height * 2 / 3)
             }
         }
-        .padding()
-    }
-}
-
-struct DayForecast: View {
-    let day: String
-    let isRainy: Bool
-    let high: Int
-    let low: Int
-    
-    var iconName: String {
-        isRainy ? "cloud.rain.fill" : "sun.max.fill"
-    }
-    
-    var iconColor: Color {
-        isRainy ? Color.blue : Color.yellow
-    }
-    
-    var body: some View {
-        VStack {
-            Text(day).font(Font.largeTitle)
-            Image(systemName: iconName)
-                .foregroundStyle(iconColor)
-                .font(Font.largeTitle)
-                .padding(5)
-            Text("High: \(high)º")
-                .fontWeight(Font.Weight.semibold)
-            Text("Low: \(low)º")
-                .fontWeight(Font.Weight.medium)
-                .foregroundStyle(Color.secondary)
-        }
-        .padding()
-        .border(Color.black)
+        .background(Color(.systemGroupedBackground))
     }
 }
 
