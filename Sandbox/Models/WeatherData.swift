@@ -14,14 +14,9 @@ struct WeatherData: Identifiable {
     let highTemp: Int
     let lowTemp: Int
     let precipitationChance: Int
-    let sunriseTime: String
-    let sunsetTime: String
-    let windchill: Int?
     let windSpeed: Int
-    let humidity: Int
-    let airPressure: Double
-    let averageHigh: Int
-    let averageLow: Int
+    let dayHumidity: Int?
+    let nightHumidity: Int?
     
     var formattedDate: String {
         let formatter = DateFormatter()
@@ -63,14 +58,9 @@ func generateDummyWeatherData() -> [WeatherData] {
             highTemp: variation.high,
             lowTemp: variation.low,
             precipitationChance: variation.precip,
-            sunriseTime: "6:\(30 + dayOffset % 15) AM",
-            sunsetTime: "5:\(45 - dayOffset % 10) PM",
-            windchill: dayOffset == 0 ? variation.low - 5 : nil,
             windSpeed: variation.wind,
-            humidity: variation.humidity,
-            airPressure: variation.pressure,
-            averageHigh: 70,
-            averageLow: 52
+            dayHumidity: variation.humidity,
+            nightHumidity: variation.humidity + 10
         )
     }
 }

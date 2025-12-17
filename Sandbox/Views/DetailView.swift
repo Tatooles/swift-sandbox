@@ -43,29 +43,14 @@ struct DetailView: View {
                 TemperatureCard(title: "Low", value: "\(weather.lowTemp)°F", icon: "thermometer.snowflake", color: .blue)
             }
             
-            // Average Temperature Row
-            HStack(spacing: 24) {
-                TemperatureCard(title: "Avg High", value: "\(weather.averageHigh)°F", icon: "chart.line.uptrend.xyaxis", color: .orange)
-                TemperatureCard(title: "Avg Low", value: "\(weather.averageLow)°F", icon: "chart.line.downtrend.xyaxis", color: .cyan)
-            }
-            
             Divider()
             
             // Detailed Metrics Grid
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                 DetailMetricCard(title: "Precipitation", value: "\(weather.precipitationChance)%", icon: "drop.fill", color: .blue)
-                DetailMetricCard(title: "Windchill", value: weather.windchill != nil ? "\(weather.windchill!)°F" : "N/A", icon: "wind.snow", color: .purple)
                 DetailMetricCard(title: "Wind", value: "\(weather.windSpeed) mph", icon: "wind", color: .teal)
-                DetailMetricCard(title: "Humidity", value: "\(weather.humidity)%", icon: "humidity.fill", color: .mint)
-                DetailMetricCard(title: "Pressure", value: String(format: "%.1f mb", weather.airPressure), icon: "gauge.with.dots.needle.bottom.50percent", color: .indigo)
-            }
-            
-            Divider()
-            
-            // Sunrise/Sunset Row
-            HStack(spacing: 24) {
-                SunTimeCard(title: "Sunrise", time: weather.sunriseTime, icon: "sunrise.fill")
-                SunTimeCard(title: "Sunset", time: weather.sunsetTime, icon: "sunset.fill")
+                DetailMetricCard(title: "Day Humidity", value: weather.dayHumidity != nil ? "\(weather.dayHumidity!)%" : "N/A", icon: "humidity.fill", color: .mint)
+                DetailMetricCard(title: "Night Humidity", value: weather.nightHumidity != nil ? "\(weather.nightHumidity!)%" : "N/A", icon: "humidity.fill", color: .cyan)
             }
             
             Spacer()

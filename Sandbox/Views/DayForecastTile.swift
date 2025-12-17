@@ -52,25 +52,6 @@ struct DayForecastTile: View {
                 Text("\(weather.precipitationChance)%")
                     .font(.caption)
             }
-            
-            // Sunrise/Sunset
-            VStack(spacing: 2) {
-                HStack(spacing: 2) {
-                    Image(systemName: "sunrise.fill")
-                        .font(.caption2)
-                        .foregroundStyle(.orange)
-                    Text(weather.sunriseTime)
-                        .font(.caption2)
-                }
-                HStack(spacing: 2) {
-                    Image(systemName: "sunset.fill")
-                        .font(.caption2)
-                        .foregroundStyle(.orange)
-                    Text(weather.sunsetTime)
-                        .font(.caption2)
-                }
-            }
-            .foregroundStyle(.secondary)
         }
         .padding(.vertical, 12)
         .padding(.horizontal, 10)

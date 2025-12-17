@@ -181,33 +181,61 @@ class WeatherService {
             var highTemp: Int
             var lowTemp: Int
             var precipChance: Int = 0
-            var humidity: Int = 50 // Default
+            var dayHumidity: Int?
+            var nightHumidity: Int?
             var windSpeed: Int = 0
             
             if period.isDaytime {
                 // This is a daytime period - use this date for the forecast
                 highTemp = period.temperature
                 precipChance = period.probabilityOfPrecipitation?.value ?? 0
-                humidity = period.relativeHumidity?.value ?? 50
+                
+                // Get day humidity
+                dayHumidity = period.relativeHumidity?.value
+                if let humidityValue = dayHumidity {
+                    print("Day humidity for \(period.name): \(humidityValue)%")
+                } else {
+                    print("Day humidity missing for \(period.name)")
+                }
+                
                 windSpeed = parseWindSpeed(period.windSpeed)
                 
                 // Look for the next period (night) to get low temp
                 if i + 1 < periods.count && !periods[i + 1].isDaytime {
-                    lowTemp = periods[i + 1].temperature
+                    let nightPeriod = periods[i + 1]
+                    lowTemp = nightPeriod.temperature
                     // Use max precipitation chance
-                    let nightPrecip = periods[i + 1].probabilityOfPrecipitation?.value ?? 0
+                    let nightPrecip = nightPeriod.probabilityOfPrecipitation?.value ?? 0
                     precipChance = max(precipChance, nightPrecip)
+                    
+                    // Get night humidity
+                    nightHumidity = nightPeriod.relativeHumidity?.value
+                    if let humidityValue = nightHumidity {
+                        print("Night humidity for \(nightPeriod.name): \(humidityValue)%")
+                    } else {
+                        print("Night humidity missing for \(nightPeriod.name)")
+                    }
+                    
                     i += 2 // Skip both day and night
                 } else {
-                    lowTemp = highTemp - 15 // Estimate
+                    // Skip this period if we don't have a matching night period
                     i += 1
+                    continue
                 }
             } else {
                 // This is a nighttime period (e.g., "Tonight")
                 // We need to pair it with the NEXT day period and use that day's date
                 lowTemp = period.temperature
                 precipChance = period.probabilityOfPrecipitation?.value ?? 0
-                humidity = period.relativeHumidity?.value ?? 50
+                
+                // Get night humidity
+                nightHumidity = period.relativeHumidity?.value
+                if let humidityValue = nightHumidity {
+                    print("Night humidity for \(period.name): \(humidityValue)%")
+                } else {
+                    print("Night humidity missing for \(period.name)")
+                }
+                
                 windSpeed = parseWindSpeed(period.windSpeed)
                 
                 // Look ahead for next day to get high and the correct date
@@ -225,28 +253,32 @@ class WeatherService {
                     let dayPrecip = nextDayPeriod.probabilityOfPrecipitation?.value ?? 0
                     precipChance = max(precipChance, dayPrecip)
                     
-                    // Create the weather data with the NEXT day's date
+                    // Get day humidity
+                    dayHumidity = nextDayPeriod.relativeHumidity?.value
+                    if let humidityValue = dayHumidity {
+                        print("Day humidity for \(nextDayPeriod.name): \(humidityValue)%")
+                    } else {
+                        print("Day humidity missing for \(nextDayPeriod.name)")
+                    }
+                    
+                    // Create the weather data with the NEXT day's date - only real data
                     let weatherData = WeatherData(
                         date: nextDayDate,
                         dayOfWeek: dayName,
                         highTemp: highTemp,
                         lowTemp: lowTemp,
                         precipitationChance: precipChance,
-                        sunriseTime: "6:30 AM",
-                        sunsetTime: "5:45 PM",
-                        windchill: nil,
                         windSpeed: windSpeed,
-                        humidity: humidity,
-                        airPressure: 1015.0,
-                        averageHigh: 70,
-                        averageLow: 52
+                        dayHumidity: dayHumidity,
+                        nightHumidity: nightHumidity
                     )
                     weatherDataArray.append(weatherData)
                     i += 2
                     continue // Skip the normal WeatherData creation below
                 } else {
-                    highTemp = lowTemp + 15 // Estimate
+                    // Skip this period if we don't have a matching day period
                     i += 1
+                    continue
                 }
             }
             
@@ -256,14 +288,9 @@ class WeatherService {
                 highTemp: highTemp,
                 lowTemp: lowTemp,
                 precipitationChance: precipChance,
-                sunriseTime: "6:30 AM", // Default - not available from API
-                sunsetTime: "5:45 PM",  // Default - not available from API
-                windchill: nil,         // Not available from basic forecast
                 windSpeed: windSpeed,
-                humidity: humidity,
-                airPressure: 1015.0,    // Default - not available from API
-                averageHigh: 70,        // Default - not available from API
-                averageLow: 52          // Default - not available from API
+                dayHumidity: dayHumidity,
+                nightHumidity: nightHumidity
             )
             
             weatherDataArray.append(weatherData)
